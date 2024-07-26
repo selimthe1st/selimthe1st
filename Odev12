@@ -1,1 +1,54 @@
+1) film tablosunda film uzunluğu length sütununda gösterilmektedir. Uzunluğu ortalama film uzunluğundan fazla kaç tane film vardır?
+-- Ortalamayı hesaplamak için
+WITH avg_length AS (
+    SELECT AVG(length) AS average_length
+    FROM film
+)
 
+-- Ortalama uzunluktan uzun filmleri saymak için
+SELECT COUNT(*) AS count_of_long_films
+FROM film, avg_length
+WHERE length > average_length;
+
+2) film tablosunda en yüksek rental_rate değerine sahip kaç tane film vardır?
+-- En yüksek rental_rate değerini bulmak için
+WITH max_rental_rate AS (
+    SELECT MAX(rental_rate) AS highest_rental_rate
+    FROM film
+)
+
+-- En yüksek rental_rate değerine sahip filmleri saymak için
+SELECT COUNT(*) AS count_of_highest_rental_rate_films
+FROM film, max_rental_rate
+WHERE rental_rate = highest_rental_rate;
+
+3) film tablosunda en düşük rental_rate ve en düşün replacement_cost değerlerine sahip filmleri sıralayınız.
+-- En düşük rental_rate ve en düşük replacement_cost değerlerini bulmak için
+WITH min_rental_rate AS (
+    SELECT MIN(rental_rate) AS lowest_rental_rate
+    FROM film
+),
+min_replacement_cost AS (
+    SELECT MIN(replacement_cost) AS lowest_replacement_cost
+    FROM film
+)
+
+-- En düşük değerleri içeren filmleri sıralamak için
+SELECT *
+FROM film
+WHERE rental_rate = (SELECT lowest_rental_rate FROM min_rental_rate)
+   OR replacement_cost = (SELECT lowest_replacement_cost FROM min_replacement_cost);
+
+4) payment tablosunda en fazla sayıda alışveriş yapan müşterileri(customer) sıralayınız.
+-- Her müşterinin yaptığı alışveriş sayısını hesaplamak için
+WITH customer_purchase_count AS (
+    SELECT customer_id, COUNT(*) AS purchase_count
+    FROM payment
+    GROUP BY customer_id
+)
+
+-- En fazla alışveriş yapan müşterileri sıralamak için
+SELECT c.customer_id, c.first_name, c.last_name, p.purchase_count
+FROM customer c
+JOIN customer_purchase_count p ON c.customer_id = p.customer_id
+ORDER BY p.purchase_count DESC;
