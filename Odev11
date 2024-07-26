@@ -1,1 +1,56 @@
+1) actor ve customer tablolarında bulunan first_name sütunları için tüm verileri sıralayalım.
+-- Tüm aktör isimlerini sıralamak için
+SELECT first_name
+FROM actor
+ORDER BY first_name;
 
+-- Tüm müşteri isimlerini sıralamak için
+SELECT first_name
+FROM customer
+ORDER BY first_name;
+
+2)actor ve customer tablolarında bulunan first_name sütunları için kesişen verileri sıralayalım.
+SELECT DISTINCT a.first_name
+FROM actor a
+JOIN customer c ON a.first_name = c.first_name
+ORDER BY a.first_name;
+
+3) actor ve customer tablolarında bulunan first_name sütunları için ilk tabloda bulunan ancak ikinci tabloda bulunmayan verileri sıralayalım.
+SELECT DISTINCT a.first_name
+FROM actor a
+LEFT JOIN customer c ON a.first_name = c.first_name
+WHERE c.first_name IS NULL
+ORDER BY a.first_name;
+
+4) İlk 3 sorguyu tekrar eden veriler için de yapalım.
+a) Tekrar eden first_name verilerini sıralama (actor tablosu için);
+SELECT first_name
+FROM actor
+GROUP BY first_name
+HAVING COUNT(*) > 1
+ORDER BY first_name;
+
+b. Tekrar eden first_name verilerini sıralama (customer tablosu için)
+SELECT first_name
+FROM customer
+GROUP BY first_name
+HAVING COUNT(*) > 1
+ORDER BY first_name;
+
+c. Tekrar eden first_name verilerini sıralama (her iki tablo için kesişen veriler)
+SELECT DISTINCT a.first_name
+FROM actor a
+JOIN customer c ON a.first_name = c.first_name
+GROUP BY a.first_name
+HAVING COUNT(*) > 1
+ORDER BY a.first_name;
+
+
+d. Tekrar eden first_name verilerini sıralama (actor tablosunda bulunup customer tablosunda bulunmayan veriler)
+SELECT DISTINCT a.first_name
+FROM actor a
+LEFT JOIN customer c ON a.first_name = c.first_name
+WHERE c.first_name IS NULL
+GROUP BY a.first_name
+HAVING COUNT(*) > 1
+ORDER BY a.first_name;
